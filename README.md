@@ -1,11 +1,11 @@
-# TurboWarp/scratch-paint
+# HyperMimic/scratch-paint
 
-Modified version of scratch-paint for TurboWarp
+Modified version of scratch-paint for HyperMimic
 
 ## Building
 
 ```bash
-git clone https://github.com/TurboWarp/scratch-paint.git
+git clone https://github.com/Hyper-Mimic/scratch-paint.git
 npm ci
 npm start
 npm run build
@@ -17,7 +17,7 @@ For more information, see https://docs.turbowarp.org/development/getting-started
 
 ## License
 
-TurboWarp/scratch-paint is licensed under the GNU General Public License version 3.0. See LICENSE for more information.
+HyperMimic/scratch-paint is licensed under the GNU General Public License version 3.0. See LICENSE for more information.
 
 The original scratch-paint that this is based on uses the following license:
 
