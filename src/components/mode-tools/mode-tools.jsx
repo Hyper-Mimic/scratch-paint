@@ -41,7 +41,138 @@ import bitRectOutlinedIcon from '../bit-rect-mode/rectangle-outlined.svg';
 
 import {MAX_STROKE_WIDTH} from '../../reducers/stroke-width';
 
+import RoundedRectTypeDropdown from '../rounded-rect-type-dropdown/rounded-rect-type-dropdown.jsx';
+
 const LiveInput = LiveInputHOC(Input);
+
+class RoundedRectParams extends React.Component {
+    constructor (props) {
+        super(props);
+        this.state = {
+            roundMode: 'uniform',
+            uniformRadius: 20,
+            cornerRadii: [20, 20, 20, 20]
+        };
+        this.handleModeChange = this.handleModeChange.bind(this);
+        this.handleUniformRadiusChange = this.handleUniformRadiusChange.bind(this);
+        this.handleCornerRadiusChange = this.handleCornerRadiusChange.bind(this);
+        this.notifyRadiusChange = this.notifyRadiusChange.bind(this);
+    }
+
+    componentDidMount() {
+        // 组件挂载时传递初始圆角值
+        this.notifyRadiusChange([20, 20, 20, 20]);
+    }
+
+    // 统一通知父组件圆角变化
+    notifyRadiusChange(radii) {
+        // 确保 radii 是包含4个数字的数组
+        const validRadii = radii.map(r => {
+            const num = Number(r);
+            return isNaN(num) ? 0 : Math.max(0, Math.round(num));
+        });
+        this.props.onDrawRoundedRect(validRadii);
+    }
+
+    handleModeChange (e) {
+        const mode = e.target.value;
+        let newRadii;
+        if (mode === 'uniform') {
+            newRadii = [this.state.uniformRadius, this.state.uniformRadius, 
+                       this.state.uniformRadius, this.state.uniformRadius];
+        } else {
+            newRadii = this.state.cornerRadii.slice();
+        }
+        this.setState({
+            roundMode: mode,
+            cornerRadii: newRadii
+        });
+        this.notifyRadiusChange(newRadii);
+    }
+
+    handleUniformRadiusChange (e) {
+        const value = Number(e.target.value);
+        const clampedValue = isNaN(value) ? 0 : Math.max(0, Math.round(value));
+        const radii = [clampedValue, clampedValue, clampedValue, clampedValue];
+        this.setState({
+            uniformRadius: clampedValue,
+            cornerRadii: radii
+        });
+        this.notifyRadiusChange(radii);
+    }
+
+    handleCornerRadiusChange (index, e) {
+        const value = Number(e.target.value);
+        const clampedValue = isNaN(value) ? 0 : Math.max(0, Math.round(value));
+        const cornerRadii = this.state.cornerRadii.slice();
+        cornerRadii[index] = clampedValue;
+        this.setState({cornerRadii});
+        this.notifyRadiusChange(cornerRadii);
+    }
+
+    render () {
+        const { intl } = this.props;
+        return (
+            <div className={styles.modeTools}>
+                <InputGroup className={styles.modLabeledIconHeight}>
+                    <Label text={intl.formatMessage({ id: 'paint.roundedRect.cornerType', defaultMessage: 'Type' })}>
+                        <select 
+                            value={this.state.roundMode} 
+                            onChange={this.handleModeChange}
+                            className={styles.select}
+                        >
+                            <option value="uniform">
+                                {intl.formatMessage({ id: 'paint.roundedRect.uniform', defaultMessage: 'Uniform' })}
+                            </option>
+                            <option value="four">
+                                {intl.formatMessage({ id: 'paint.roundedRect.fourCorners', defaultMessage: 'Separate' })}
+                            </option>
+                        </select>
+                    </Label>
+                </InputGroup>
+                {this.state.roundMode === 'uniform' ? (
+                    <InputGroup className={styles.modLabeledIconHeight}>
+                        <Label text={intl.formatMessage({ id: 'paint.roundedRect.radius', defaultMessage: 'Corner Radius' })}>
+                            <Input
+                                range
+                                small
+                                type="number"
+                                min="0"
+                                max="200"
+                                value={String(this.state.uniformRadius)}
+                                onChange={this.handleUniformRadiusChange}
+                            />
+                        </Label>
+                    </InputGroup>
+                ) : (
+                    <div className={styles.modeTools}>
+                        {[
+                            { id: 'tl', label: intl.formatMessage({ id: 'paint.roundedRect.topLeft', defaultMessage: 'topleft' }) },
+                            { id: 'tr', label: intl.formatMessage({ id: 'paint.roundedRect.topRight', defaultMessage: 'topright' }) },
+                            { id: 'br', label: intl.formatMessage({ id: 'paint.roundedRect.bottomRight', defaultMessage: 'bottomright' }) },
+                            { id: 'bl', label: intl.formatMessage({ id: 'paint.roundedRect.bottomLeft', defaultMessage: 'bottomleft' }) }
+                        ].map((corner, index) => (
+                            <InputGroup className={styles.modLabeledIconHeight} key={corner.id}>
+                                <Label text={corner.label}>
+                                    <Input
+                                        range
+                                        small
+                                        type="number"
+                                        min="0"
+                                        max="200"
+                                        value={String(this.state.cornerRadii[index] || 0)}
+                                        onChange={e => this.handleCornerRadiusChange(index, e)}
+                                    />
+                                </Label>
+                            </InputGroup>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
+    }
+}
+
 const ModeToolsComponent = props => {
     const messages = defineMessages({
         brushSize: {
@@ -103,6 +234,46 @@ const ModeToolsComponent = props => {
             defaultMessage: 'Outlined',
             description: 'Label for the button that sets the bitmap rectangle/oval mode to draw filled-in shapes',
             id: 'paint.modeTools.outlined'
+        },
+        Type: {
+            id: 'paint.roundedRect.cornerType',
+            description: 'Label for the dropdown that selects corner type',
+            defaultMessage: 'Type'
+        },
+        Uniform: {
+            id: 'paint.roundedRect.uniform',
+            description: 'Option for uniform corner radius mode',
+            defaultMessage: 'Uniform'
+        },
+        Separate: {
+            id: 'paint.roundedRect.fourCorners',
+            description: 'Option for four separate corner radius mode',
+            defaultMessage: 'Separate'
+        },
+        CornerRadius: {
+            id: 'paint.roundedRect.radius',
+            description: 'Label for the input to set uniform corner radius',
+            defaultMessage: 'Corner Radius'
+        },
+        topleft: {
+            id: 'paint.roundedRect.topLeft',
+            description: 'Label for the input to set top-left corner radius',
+            defaultMessage: 'top-left'
+        },
+        topright: {
+            id: 'paint.roundedRect.topRight',
+            description: 'Label for the input to set top-right corner radius',
+            defaultMessage: 'top-right'
+        },
+        bottomright: {
+            id: 'paint.roundedRect.bottomRight',
+            description: 'Label for the input to set bottom-right corner radius',
+            defaultMessage: 'bottom-right'
+        },
+        bottomleft: {
+            id: 'paint.roundedRect.bottomLeft',
+            description: 'Label for the input to set bottom-left corner radius',
+            defaultMessage: 'bottom-left'
         }
     });
 
@@ -256,7 +427,20 @@ const ModeToolsComponent = props => {
             </div>
         );
     case Modes.BIT_RECT:
+        return (
+            <div className={classNames(props.className, styles.modeTools)}>
+            </div>
+        );
+
         /* falls through */
+    case Modes.ROUNDED_RECT:
+    return (
+        <div className={classNames(props.className, styles.modeTools)}>
+            <RoundedRectTypeDropdown
+                onCornerRadiiChange={props.onDrawRoundedRect}
+            />
+        </div>
+    );
     case Modes.BIT_OVAL:
     {
         const fillIcon = props.mode === Modes.BIT_RECT ? bitRectIcon : bitOvalIcon;
@@ -299,6 +483,7 @@ const ModeToolsComponent = props => {
             </div>
         );
     }
+    
     default:
         // Leave empty for now, if mode not supported
         return (
@@ -330,6 +515,7 @@ ModeToolsComponent.propTypes = {
     onFillShapes: PropTypes.func.isRequired,
     onFlipHorizontal: PropTypes.func.isRequired,
     onFlipVertical: PropTypes.func.isRequired,
+    onDrawRoundedRect: PropTypes.func.isRequired,
     onManageFonts: PropTypes.func,
     onOutlineShapes: PropTypes.func.isRequired,
     onPasteFromClipboard: PropTypes.func.isRequired,
