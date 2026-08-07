@@ -43,6 +43,8 @@ import zoomOutIcon from './icons/zoom-out.svg';
 import zoomResetIcon from './icons/zoom-reset.svg';
 import themeIcon from './icons/theme.svg';
 
+import RoundedRectMode from '../../containers/rounded-rect-mode.jsx';
+
 const messages = defineMessages({
     bitmap: {
         defaultMessage: 'Convert to Bitmap',
@@ -104,6 +106,7 @@ const PaintEditorComponent = props => (
                         <InputGroup className={styles.modModeTools}>
                             <ModeToolsContainer
                                 onUpdateImage={props.onUpdateImage}
+                                onDrawRoundedRect={props.onDrawRoundedRect}
                                 onManageFonts={props.onManageFonts}
                             />
                         </InputGroup>
@@ -165,6 +168,10 @@ const PaintEditorComponent = props => (
                     />
                     <RectMode
                         onUpdateImage={props.onUpdateImage}
+                    />
+                    <RoundedRectMode
+                        onUpdateImage={props.onUpdateImage}
+                        roundedRectRadii={props.roundedRectRadii}
                     />
                 </div>
             ) : null}
@@ -345,6 +352,7 @@ PaintEditorComponent.propTypes = {
     onSwitchToVector: PropTypes.func.isRequired,
     onUndo: PropTypes.func.isRequired,
     onUpdateImage: PropTypes.func.isRequired,
+    onDrawRoundedRect: PropTypes.func,
     onUpdateName: PropTypes.func.isRequired,
     onZoomIn: PropTypes.func.isRequired,
     onZoomOut: PropTypes.func.isRequired,
