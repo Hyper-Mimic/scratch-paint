@@ -90,15 +90,20 @@ class PaintEditor extends React.Component {
             'handleChangeTheme',
             'handleZoomIn',
             'handleZoomOut',
-            'handleZoomReset'
+            'handleZoomReset',
+            'handleRoundedRectRadiiChange'
         ]);
         this.state = {
             canvas: null,
-            colorInfo: null
+            colorInfo: null,
+            roundedRectRadii: [20, 20, 20, 20]
         };
         this.props.setLayout(this.props.rtl ? 'rtl' : 'ltr');
         this.props.onCustomFontsChanged(this.props.customFonts);
         resizeView(this.props.width, this.props.height);
+    }
+    handleRoundedRectRadiiChange (roundedRectRadii) {
+        this.setState({roundedRectRadii});
     }
     componentDidMount () {
         document.addEventListener('keydown', this.props.onKeyPress);
@@ -358,6 +363,8 @@ class PaintEditor extends React.Component {
                 onZoomIn={this.handleZoomIn}
                 onZoomOut={this.handleZoomOut}
                 onZoomReset={this.handleZoomReset}
+                onDrawRoundedRect={this.handleRoundedRectRadiiChange}
+                roundedRectRadii={this.state.roundedRectRadii}
             />
         );
     }
