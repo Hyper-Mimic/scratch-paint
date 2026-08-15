@@ -223,6 +223,7 @@ class ModeTools extends React.Component {
                 onPasteFromClipboard={this.handlePasteFromClipboard}
                 onPointPoints={this.handlePointPoints}
                 onUpdateImage={this.props.onUpdateImage}
+                onDrawRoundedRect={this.props.onDrawRoundedRect}
             />
         );
     }
