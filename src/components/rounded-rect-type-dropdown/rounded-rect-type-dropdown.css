@@ -1,0 +1,67 @@
+@import "../../css/colors.css";
+@import "../../css/units.css";
+
+.mod-menu-item {
+    display: flex;
+    margin: 0 -$grid-unit;
+    min-width: 6.25rem;
+    padding: calc(2 * $grid-unit);
+    padding-left: calc(3 * $grid-unit);
+    padding-right: calc(3 * $grid-unit);
+    width: 8.5rem;
+    cursor: pointer;
+    transition: 0.1s ease;
+    align-items: center;
+    overflow-wrap: anywhere;
+}
+
+.mod-menu-item:hover {
+    background: $looks-secondary;
+    color: white;
+}
+
+.mod-context-menu {
+    display: flex;
+    flex-direction: column;
+}
+
+.mod-unselect {
+    user-select: none;
+}
+
+.menu-item {
+    display: flex;
+    margin: 0 -$grid-unit;
+    min-width: 6.25rem;
+    padding: calc(2 * $grid-unit);
+    padding-left: calc(3 * $grid-unit);
+    padding-right: calc(3 * $grid-unit);
+    width: 7.5rem;
+    cursor: pointer;
+    transition: 0.1s ease;
+    align-items: center;
+    overflow-wrap: anywhere;
+    font-size: .8rem;
+}
+
+.menu-item:hover {
+    background: $looks-secondary;
+    color: white;
+}
+
+.menu-group {
+    display: flex;
+    flex-direction: column;
+    border-radius: 4px;
+    padding: calc($grid-unit / 2) 0;
+}
+
+.roundedRectParams {
+    display: flex;
+    margin: 0 $grid-unit;
+}
+
+.modeDropdown {
+    margin: 0 $grid-unit;
+    user-select: none;
+}
