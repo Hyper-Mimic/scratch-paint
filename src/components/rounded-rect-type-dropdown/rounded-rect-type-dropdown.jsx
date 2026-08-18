@@ -132,7 +132,8 @@ class RoundedRectParams extends React.Component {
                     popoverContent={dropdownContent}
                     tipSize={0.01}
                     onOpen={this.handleDropdownToggle}
-                    onOuterAction={this.handleDropdownToggle}
+                    onRequestClose={this.handleClose}  // ← 可能是这个
+                    onClickOutside={this.handleClose}
                 >
                     <span className={styles.currentModeLabel}>
                         {getCurrentModeLabel()}
@@ -201,6 +202,7 @@ class RoundedRectParams extends React.Component {
 }
 
 RoundedRectParams.propTypes = {
+    onClickOutsideDropdown: PropTypes.func,
     onCornerRadiiChange: PropTypes.func.isRequired,
     intl: intlShape
 };
